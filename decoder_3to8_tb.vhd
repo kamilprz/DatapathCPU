@@ -77,6 +77,14 @@ BEGIN
     B <= '0';
     C <= '1';
     wait for 10 ns;
+    B <= '1';
+    C <= '0';
+    wait for 10 ns;
+    C <= '1';
+    wait for 10 ns;
+    A <= '1';
+    B <= '0';
+    C <= '0';
     
    end process;
 
