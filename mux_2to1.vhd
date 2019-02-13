@@ -44,6 +44,6 @@ architecture Behavioral of mux_2to1 is
 begin
 Z <= A after 5 ns when S='0' else
      B after 5 ns when S='1' else
-     "00" after 5 ns;
+     x"0000" after 5 ns;
 end Behavioral;
 

@@ -1,19 +1,21 @@
 --------------------------------------------------------------------------------
 LIBRARY ieee;
 USE ieee.std_logic_1164.ALL;
+use IEEE.STD_LOGIC_ARITH.ALL;
+use IEEE.STD_LOGIC_UNSIGNED.ALL;
  
 -- Uncomment the following library declaration if using
 -- arithmetic functions with Signed or Unsigned values
 --USE ieee.numeric_std.ALL;
  
-ENTITY multiplexer_8to1_tb IS
-END multiplexer_8to1_tb;
+ENTITY mux_8to1_tb IS
+END mux_8to1_tb;
  
-ARCHITECTURE behavior OF multiplexer_8to1_tb IS 
+ARCHITECTURE behavior OF mux_8to1_tb IS 
  
     -- Component Declaration for the Unit Under Test (UUT)
  
-    COMPONENT multiplexer_8to1
+    COMPONENT mux_8to1
     PORT(
          s : IN  std_logic_vector(2 downto 0);
          A : IN  std_logic_vector(15 downto 0);
@@ -24,7 +26,7 @@ ARCHITECTURE behavior OF multiplexer_8to1_tb IS
          F : IN  std_logic_vector(15 downto 0);
          G : IN  std_logic_vector(15 downto 0);
          H : IN  std_logic_vector(15 downto 0);
-         z : OUT  std_logic_vector(15 downto 0)
+         Z : OUT  std_logic_vector(15 downto 0)
         );
     END COMPONENT;
     
@@ -41,7 +43,7 @@ ARCHITECTURE behavior OF multiplexer_8to1_tb IS
    signal H : std_logic_vector(15 downto 0) := (others => '0');
 
  	--Outputs
-   signal z : std_logic_vector(15 downto 0);
+   signal Z : std_logic_vector(15 downto 0);
    -- No clocks detected in port list. Replace <clock> below with 
    -- appropriate port name 
  
@@ -50,7 +52,7 @@ ARCHITECTURE behavior OF multiplexer_8to1_tb IS
 BEGIN
  
 	-- Instantiate the Unit Under Test (UUT)
-   uut: multiplexer_8to1 PORT MAP (
+   uut: mux_8to1 PORT MAP (
           s => s,
           A => A,
           B => B,
@@ -60,7 +62,7 @@ BEGIN
           F => F,
           G => G,
           H => H,
-          z => z
+          Z => Z
         );
 
    stim_proc: process
@@ -96,7 +98,7 @@ BEGIN
 		
       wait for 10 ns;	
 		s <= "111";     
- --     wait;
+      wait FOR 10 ns;
    end process;
 
 END;
