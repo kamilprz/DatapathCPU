@@ -50,8 +50,8 @@ BEGIN
 
    stim_proc: process
    begin		
-        A <= "1111000011110000";
-		B <= "0000111100001111";
+        A <= x"DEAD";
+		B <= x"BEEF";
       wait for 10 ns;	
         s <= '0';
 

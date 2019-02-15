@@ -34,7 +34,7 @@ ARCHITECTURE behavior OF register_16bit_tb IS
    -- No clocks detected in port list. Replace <clock> below with 
    -- appropriate port name 
  
---   constant Clk_period : time := 10 ns;
+    constant clk_period : time := 5 ns;
  
 BEGIN
  
@@ -49,16 +49,16 @@ BEGIN
    clock : process
    begin
       clk <= not clk;
-      wait for 10 ns;
+      wait for clk_period;
    end process;
    
    stim_proc : process
    begin		
         D <= x"DEAD";
         load <= '1';
-        wait for 13 ns;
+        wait for clk_period*2;
         D <= x"BEEF";
-        wait for 13 ns;
+        wait for clk_period*2;
    end process;
 
 END;
