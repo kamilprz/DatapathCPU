@@ -1,58 +1,148 @@
 
 
+
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.STD_LOGIC_ARITH.ALL;
+use IEEE.STD_LOGIC_UNSIGNED.ALL;
+
 
 --use UNISIM.VComponents.all;
 
 entity ripple_adder_16 is
  Port ( A,B : in std_logic_vector(15 downto 0 );
-        C0: in std_logic;
+        Cin: in std_logic;
         Z: out std_logic_vector(15 downto 0);
-        C16: out std_logic
+        C: out std_logic;
+        V: out std_logic
         );
 end ripple_adder_16;
 
 architecture Behavioral of ripple_adder_16 is
 
 component full_adder
-    port(a,b,c : in std_logic;
-         z, c_out : out std_logic);
+    port(A,B,C_in : in std_logic;
+         Z, C_out : out std_logic);
 end component;
 
-signal C: std_logic_vector(15 downto 1);
+signal carries: std_logic_vector(15 downto 0);
 
 begin
-    Bit0: full_adder
-    port map (A(0), B(0), C0, Z(0), C(1));
-    Bit1: full_adder
-    port map (A(1), B(1), C(1), Z(1), C(2));
-    Bit2: full_adder
-    port map (A(2), B(2), C(2), Z(2), C(3));
-    Bit3: full_adder
-    port map (A(3), B(3), C(3), Z(3), C(4));
-    Bit4: full_adder
-    port map (A(4), B(4), C(4), Z(4), C(5));
-    Bit5: full_adder
-    port map (A(5), B(5), C(5), Z(5), C(6));
-    Bit6: full_adder
-    port map (A(6), B(6), C(6), Z(6), C(6));
-    Bit7: full_adder
-    port map (A(7), B(7), C(7), Z(7), C(8));
-    Bit8: full_adder
-    port map (A(8), B(8), C(8), Z(8), C(9));
-    Bit9: full_adder
-    port map (A(9), B(9), C(9), Z(9), C(10));
-    Bit10: full_adder
-    port map (A(10), B(10), C(10), Z(10), C(11));
-    Bit11: full_adder
-    port map (A(11), B(11), C(11), Z(11), C(12));
-    Bit12: full_adder
-    port map (A(12), B(12), C(12), Z(12), C(13));
-    Bit13: full_adder
-    port map (A(13), B(13), C(13), Z(13), C(14));
-    Bit14: full_adder
-    port map (A(14), B(14), C(14), Z(14), C(15));
-    Bit15: full_adder
-    port map (A(15), B(15), C(15), Z(15), C16);
+    Bit0: full_adder port map (
+    A => A(0),
+    B => B(0),
+    C_in => Cin,
+    Z => Z(0), 
+    C_out => carries(1)
+    );
+    Bit1: full_adder port map (
+    A => A(1),
+    B => B(1),
+    C_in => carries(1),
+    Z => Z(1), 
+    C_out => carries(2)
+    );
+    Bit2: full_adder port map (
+    A => A(2),
+    B => B(2),
+    C_in => carries(2),
+    Z => Z(2), 
+    C_out => carries(3)
+    );
+    Bit3: full_adder port map (
+    A => A(3),
+    B => B(3),
+    C_in => carries(3),
+    Z => Z(3), 
+    C_out => carries(4)
+    );
+    Bit4: full_adder port map (
+    A => A(4),
+    B => B(4),
+    C_in => carries(4),
+    Z => Z(4), 
+    C_out => carries(5)
+    );
+    Bit5: full_adder port map (
+    A => A(5),
+    B => B(5),
+    C_in => carries(5),
+    Z => Z(5), 
+    C_out => carries(6)
+    );
+    Bit6: full_adder port map (
+    A => A(6),
+    B => B(6),
+    C_in => carries(6),
+    Z => Z(6), 
+    C_out => carries(7)
+    );
+    Bit7: full_adder port map (
+    A => A(7),
+    B => B(7),
+    C_in => carries(7),
+    Z => Z(7), 
+    C_out => carries(8)
+    );
+    Bit8: full_adder port map (
+    A => A(8),
+    B => B(8),
+    C_in => carries(8),
+    Z => Z(8), 
+    C_out => carries(9)
+    );
+    Bit9: full_adder port map (
+    A => A(9),
+    B => B(9),
+    C_in => carries(9),
+    Z => Z(9), 
+    C_out => carries(10)
+    );
+    Bit10: full_adder port map (
+    A => A(10),
+    B => B(10),
+    C_in => carries(10),
+    Z => Z(10), 
+    C_out => carries(11)
+    );
+    Bit11: full_adder port map (
+    A => A(11),
+    B => B(11),
+    C_in => carries(11),
+    Z => Z(11), 
+    C_out => carries(12)
+    );
+    Bit12: full_adder port map (
+    A => A(12),
+    B => B(12),
+    C_in => carries(12),
+    Z => Z(12), 
+    C_out => carries(13)
+    );
+    Bit13: full_adder port map (
+    A => A(13),
+    B => B(13),
+    C_in => carries(13),
+    Z => Z(13), 
+    C_out => carries(14)
+    );
+    Bit14: full_adder port map (
+    A => A(14),
+    B => B(14),
+    C_in => carries(14),
+    Z => Z(14), 
+    C_out => carries(15)
+    );
+    Bit15: full_adder port map (
+    A => A(15),
+    B => B(15),
+    C_in => carries(15),
+    Z => Z(15), 
+    C_out => carries(0)
+    );
+    
+    ------------------------------------------------------------------ OVERFLOW ???????????????????????? ---------------------------------------------------------
+    C <= carries(0);
+    V <= (carries(15) xor carries(0));
+    
 end Behavioral;
