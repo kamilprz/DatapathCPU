@@ -22,7 +22,6 @@ end component;
     
     -- signals
     signal A, B, Z : std_logic_vector(15 downto 0) := (others => '0');
---signal carries : std_logic_vector(16 downto 0) := (others => '0');
     signal Cin, V, C : std_logic := '0';
     
 begin
@@ -38,34 +37,21 @@ begin
     
     stim_process: process
         begin
-       wait for 100 ns;	
-      
-          -- 0 + 0 = 0
-          A <= x"0000";
-          B <= x"0000";
-          Cin <= '0';
-        wait for 100 ns;
-              
-          -- 2 + 2 = 4
+
           A <= x"0000";
           B <= x"0000";
           Cin <= '1';
         wait for 100 ns;
-              
-          -- 0 + 0 + 1 = 1
-          A <= x"0001";
-          B <= x"0001";
+
+          A <= x"0005";
+          B <= x"0005";
           Cin <= '0';
         wait for 100 ns;
           
-          -- 65535 + 65535 = 0 (+ carry)
-          A <= x"FFFF";
-          B <= x"FFFF";
+          A <= x"8000";
+          B <= x"8000";
           Cin <= '0';
         wait for 100 ns;
-        
-        
-        ------------------------------------------------------------------ OVERFLOW ???????????????????????? ---------------------------------------------------------
 
         
         end process;

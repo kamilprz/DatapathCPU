@@ -33,11 +33,44 @@ begin
     
     stim_process: process
     begin
+    A <= '0';
+    B <= '0';
+    C_in <= '0';
     
+    wait for 10 ns;
     A <= '1';
     B <= '0';
     C_in <= '0';
-    wait for 5 ns;
+    
+    wait for 10 ns;
+    A <= '0';
+    B <= '1';
+    C_in <= '0';
+    
+    wait for 10 ns;
+    A <= '0';
+    B <= '0';
+    C_in <= '1';
+    
+    wait for 10 ns;
+    A <= '1';
+    B <= '0';
+    C_in <= '1';
+    
+    wait for 10 ns;
+    A <= '0';
+    B <= '1';
+    C_in <= '1';
+    
+    wait for 10 ns;
+    A <= '1';
+    B <= '1';
+    C_in <= '0';
+    
+    wait for 10 ns;
+    A <= '1';
+    B <= '1';
+    C_in <= '1';
     
     end process;
 

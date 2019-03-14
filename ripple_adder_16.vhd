@@ -1,11 +1,9 @@
 
 
-
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.STD_LOGIC_ARITH.ALL;
 use IEEE.STD_LOGIC_UNSIGNED.ALL;
-
 
 --use UNISIM.VComponents.all;
 
@@ -141,7 +139,6 @@ begin
     C_out => carries(0)
     );
     
-    ------------------------------------------------------------------ OVERFLOW ???????????????????????? ---------------------------------------------------------
     C <= carries(0);
     V <= (carries(15) xor carries(0));
     

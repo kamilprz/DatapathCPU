@@ -39,7 +39,7 @@ begin
         Z => Z
     );
     
-    C_out <= c_out1 or c_out2 after 1 ns;
+    C_out <= c_out1 or c_out2;
     
     
 end Behavioral;
