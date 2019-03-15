@@ -35,7 +35,7 @@ begin
     stim_proc : process
     begin
     
-        B <= x"A0A0";
+        B <= x"A0AF";
         FS <= "10000";
         IL <= '0';
         IR <= '0';
@@ -46,9 +46,12 @@ begin
         wait for 50 ns;
         --result should be shifted right
         
+        FS <= "10000";
+        wait for 50 ns;
+        
         FS<="10100";
         wait for 50 ns;
-        --result should the original number i.e. shifted left.
+        --result should shifted left
 
     end process;
 
