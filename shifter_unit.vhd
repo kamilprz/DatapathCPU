@@ -8,7 +8,6 @@ entity shifter_unit is
    Port (
     B: in STD_LOGIC_VECTOR(15 downto 0);
     FS: in STD_LOGIC_VECTOR(4 downto 0);
-    IL, IR : in STD_LOGIC;
     H: out STD_LOGIC_VECTOR(15 downto 0)
    );
 end shifter_unit;
@@ -34,7 +33,7 @@ S <= "00" when FS = "10000"else
 mux00: mux_3to1 PORT MAP(
     A => B(0),
     B => B(1),
-    C => IL,
+    C => '0',
     S => S,
     Z => H(0)
     );
@@ -152,7 +151,7 @@ mux14: mux_3to1 PORT MAP(
       
 mux15: mux_3to1 PORT MAP(
     A => B(15),
-    B => IR,
+    B => '0',
     C => B(14),
     S => S,
     Z => H(15)
