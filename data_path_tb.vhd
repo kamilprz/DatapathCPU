@@ -1,99 +1,102 @@
-
-library IEEE;
-use IEEE.STD_LOGIC_1164.ALL;
-
+LIBRARY ieee;
+USE ieee.std_logic_1164.ALL;
+ 
 -- Uncomment the following library declaration if using
 -- arithmetic functions with Signed or Unsigned values
---use IEEE.NUMERIC_STD.ALL;
-
--- Uncomment the following library declaration if instantiating
--- any Xilinx leaf cells in this code.
---library UNISIM;
---use UNISIM.VComponents.all;
-
-entity data_path_tb is
-end data_path_tb;
-
-architecture Behavioral of data_path_tb is
-    component data_path
-    Port ( 
-        td, tb, ta : in std_logic;
-        clk : in STD_LOGIC;
-        rw : in STD_LOGIC;
-        mb : in STD_LOGIC;
-        md : in STD_LOGIC;
-        dr : in STD_LOGIC_VECTOR (2 downto 0);
-        sa : in STD_LOGIC_VECTOR (2 downto 0);
-        sb : in STD_LOGIC_VECTOR (2 downto 0);
-        const_in : in STD_LOGIC_VECTOR (15 downto 0);
-        fs : in STD_LOGIC_VECTOR (4 downto 0);
-        data_in : in STD_LOGIC_VECTOR (15 downto 0);
-        bus_a, bus_b : out STD_LOGIC_VECTOR (15 downto 0);
-        data_out : out STD_LOGIC_VECTOR (15 downto 0);
-        V : out STD_LOGIC;
-        C : out STD_LOGIC;
-        N : out STD_LOGIC;
-        Z : out STD_LOGIC;
-        reg0, reg1, reg2, reg3, reg4, reg5, reg6, reg7, reg8 : out std_logic_vector(15 downto 0)
-    );
-    end component;
+--USE ieee.numeric_std.ALL;
+ 
+ENTITY data_path_tb IS
+END data_path_tb;
+ 
+ARCHITECTURE behavioral OF data_path_tb IS 
+ 
+    -- Component Declaration for the Unit Under Test (UUT)
+ 
+    COMPONENT data_path
+    Port ( data_in : in  STD_LOGIC_VECTOR (15 downto 0);
+           DR : IN  std_logic_vector(2 downto 0);
+           SA : IN  std_logic_vector(2 downto 0);
+           SB : IN  std_logic_vector(2 downto 0);
+           TD : IN  std_logic;
+           TA : IN  std_logic;
+           TB : IN  std_logic;
+           Clk : in  STD_LOGIC;
+           FS : IN  std_logic_vector(4 downto 0);
+           RW : IN  std_logic;
+           MB : IN  std_logic;
+           MM : IN  std_logic;
+           MD : IN  std_logic;
+           data_out : out  STD_LOGIC_VECTOR (15 downto 0);
+           address_out : out  STD_LOGIC_VECTOR (15 downto 0);
+           V : out  STD_LOGIC;
+           C : out  STD_LOGIC;
+           N : out  STD_LOGIC;
+           Z : out  STD_LOGIC);
+    END COMPONENT;
     
-    -- Inputs
-    signal const, data_in : std_logic_vector(15 downto 0);
-    signal reg0, reg1, reg2, reg3, 
-           reg4, reg5, reg6, reg7,
-           bus_a, bus_b : std_logic_vector(15 downto 0);
-    signal rw, td, tb, ta, mb, md : std_logic;
-    signal fs : std_logic_vector(4 downto 0);
-    signal dr, sa, sb : std_logic_vector(2 downto 0);
-    signal v_flag, c_flag, n_flag, z_flag : std_logic := '0';
-    constant Clk_time : Time := 30ns;
-    signal Clk : std_logic := '0';
-    constant clk_period : time := 100ns;
-    constant clk_half : time := clk_period/2;
-    
-begin
-    uut: data_path port map (
-        clk => clk,
-        const_in => const,
-        data_in => data_in,
-        fs => fs,
-        rw => rw,
-        td => td,
-        tb => tb,
-        ta => ta,
-        mb => mb,
-        md => md,
-        dr => dr,
-        sa => sa,
-        sb => sb,
-        bus_a => bus_a,
-        bus_b => bus_b,
-        v => v_flag,
-        c => c_flag,
-        n => n_flag,
-        z => z_flag,
-        reg0 => reg0,
-        reg1 => reg1, 
-        reg2 => reg2, 
-        reg3 => reg3, 
-        reg4 => reg4,
-        reg5 => reg5, 
-        reg6 => reg6, 
-        reg7 => reg7
-    );
-    
-    --clock
-    clk_process : process
-    begin
-        clk <= '0';
-        wait for clk_half;
-        clk <= '1';
-        wait for clk_half;
-    end process;
 
-    --tests
-    stim_proc : process
+   --Inputs
+   signal data_in : std_logic_vector(15 downto 0) := (others => '0');
+   signal DR : std_logic_vector(2 downto 0) := (others => '0');
+   signal SA : std_logic_vector(2 downto 0) := (others => '0');
+   signal SB : std_logic_vector(2 downto 0) := (others => '0');
+   signal TD : std_logic := '0';
+   signal TA : std_logic := '0';
+   signal TB : std_logic := '0';
+   signal Clk : std_logic := '0';
+   signal FS : std_logic_vector(4 downto 0) := (others => '0');
+   signal RW : std_logic := '0';
+   signal MB : std_logic := '0';
+   signal MM : std_logic := '0';
+   signal MD : std_logic := '0';
+
+ 	--Outputs
+   signal data_out : std_logic_vector(15 downto 0);
+   signal address_out : std_logic_vector(15 downto 0);
+   signal V : std_logic;
+   signal C : std_logic;
+   signal N : std_logic;
+   signal Z : std_logic;
+
+   -- Clock period definitions
+   constant Clk_period : time := 50 ns;
+ 
+BEGIN
+ 
+	-- Instantiate the Unit Under Test (UUT)
+   uut: data_path PORT MAP (
+          data_in => data_in,
+          DR => DR,
+          SA => SA,
+          SB => SB,
+          TD => TD,
+          TA => TA,
+          TB => TB,
+          Clk => Clk,
+          FS => FS,
+          RW => RW,
+          MB => MB,
+          MM => MM,
+          MD => MD,
+          data_out => data_out,
+          address_out => address_out,
+          V => V,
+          C => C,
+          N => N,
+          Z => Z
+        );
+
+   -- Clock process definitions
+   Clk_process :process
+   begin
+		Clk <= '0';
+		wait for Clk_period/2;
+		Clk <= '1';
+		wait for Clk_period/2;
+   end process;
+ 
+
+ stim_proc : process
     begin 
         --test registers
         --load hex 0 to reg0

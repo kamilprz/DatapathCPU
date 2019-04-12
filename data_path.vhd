@@ -1,122 +1,123 @@
-
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
-use IEEE.STD_LOGIC_ARITH.ALL;
-use IEEE.STD_LOGIC_UNSIGNED.ALL;
 
 entity data_path is
-    Port ( 
-        td, tb, ta : in std_logic;
-        clk : in STD_LOGIC;
-        rw : in STD_LOGIC;
-        mb : in STD_LOGIC;
-        md : in STD_LOGIC;
-        dr : in STD_LOGIC_VECTOR (2 downto 0);
-        sa : in STD_LOGIC_VECTOR (2 downto 0);
-        sb : in STD_LOGIC_VECTOR (2 downto 0);
-        const_in : in STD_LOGIC_VECTOR (15 downto 0);
-        fs : in STD_LOGIC_VECTOR (4 downto 0);
-        data_in : in STD_LOGIC_VECTOR (15 downto 0);
-        bus_a, bus_b : out STD_LOGIC_VECTOR (15 downto 0);
-        data_out : out STD_LOGIC_VECTOR (15 downto 0);
-        V : out STD_LOGIC;
-        C : out STD_LOGIC;
-        N : out STD_LOGIC;
-        Z : out STD_LOGIC;
-        reg0, reg1, reg2, reg3, reg4, reg5, reg6, reg7, reg8 : out std_logic_vector(15 downto 0)
-    );
+    Port ( data_in : in  STD_LOGIC_VECTOR (15 downto 0);
+           DR : IN  std_logic_vector(2 downto 0);
+           SA : IN  std_logic_vector(2 downto 0);
+           SB : IN  std_logic_vector(2 downto 0);
+           TD : IN  std_logic;
+           TA : IN  std_logic;
+           TB : IN  std_logic;
+           Clk : in  STD_LOGIC;
+           FS : IN  std_logic_vector(4 downto 0);
+           RW : IN  std_logic;
+           MB : IN  std_logic;
+           MM : IN  std_logic;
+           MD : IN  std_logic;
+           data_out : out  STD_LOGIC_VECTOR (15 downto 0);
+           address_out : out  STD_LOGIC_VECTOR (15 downto 0);
+           V : out  STD_LOGIC;
+           C : out  STD_LOGIC;
+           N : out  STD_LOGIC;
+           Z : out  STD_LOGIC
+           );
 end data_path;
 
 architecture Behavioral of data_path is
-    component functional_unit 
-    port(
-        FSS : in STD_LOGIC_VECTOR (4 downto 0);
-        A : in STD_LOGIC_VECTOR (15 downto 0);
-        B : in STD_LOGIC_VECTOR (15 downto 0);
-        F : out STD_LOGIC_VECTOR (15 downto 0);
-        V : out STD_LOGIC;
-        C : out STD_LOGIC;
-        N : out STD_LOGIC;
-        Z : out STD_LOGIC
-    );
-    end component;
-    
-    component register_file
-        Port (
-          sa, sb, dr : in std_logic_vector(2 downto 0);
-          td, tb, ta : in std_logic;
-          Clk : in std_logic;
-          rw : in std_logic;
-          d_data : in std_logic_vector(15 downto 0);
-          bus_a, bus_b : out std_logic_vector(15 downto 0);
-          reg0, reg1, reg2, reg3, reg4, reg5, reg6, reg7, reg8 : out std_logic_vector(15 downto 0));
-    end component;
-    
-    component mux_2to1
-    port(
-        S : in  STD_LOGIC;
-        A : in  STD_LOGIC_VECTOR (15 downto 0);
-        B : in  STD_LOGIC_VECTOR (15 downto 0);
-        z : out STD_LOGIC_VECTOR (15 downto 0)
-    );
-    end component;
-    
-    --Signals
-    signal d_data, data : std_logic_vector(15 downto 0);
-    signal bus_a_z, bus_b_z, bus_b_mux : std_logic_vector(15 downto 0); 
-    signal fss : std_logic_vector(4 downto 0); 
-    signal z_out : std_logic_vector(15 downto 0);
-    
-begin
-    FU : functional_unit port map(
-        FSS => fss,
-        A => bus_a_z,
-        B => bus_b_mux,
-        F => z_out,
-        V => V,
-        C => C,
-        N => N,
-        Z => Z
-    );
-    
-       reg_file: register_file PORT MAP (
-            sa => sa,
-            sb => sb,
-            dr => dr,
-            td => td,
-            tb => tb,
-            ta => ta,
-            Clk => Clk,
-            rw => rw,
-            d_data => d_data,
-            bus_a => bus_a_z,
-            bus_b => bus_b_z,
-            reg0 => reg0, 
-            reg1 => reg1, 
-            reg2 => reg2, 
-            reg3 => reg3, 
-            reg4 => reg4, 
-            reg5 => reg5, 
-            reg6 => reg6, 
-            reg7 => reg7,
-            reg8 => reg8
-        );
-    
-    muxB : mux_2to1 port map(
-        B => const_in,
-        A => bus_b_z,
-        S => mb,
-        z => bus_b_mux
-    );
-    
-    muxD : mux_2to1 port map(
-        B => data_in,
-        A => z_out,
-        S => md,
-        z => d_data
-    );
-    
-    bus_a <= bus_a_z;
-    bus_b <= bus_b_mux;
 
+    COMPONENT register_file
+    PORT(
+         dr : IN  std_logic_vector(2 downto 0);
+         sa : IN  std_logic_vector(2 downto 0);
+         sb : IN  std_logic_vector(2 downto 0);
+		 TD : IN std_logic;
+         TA : IN std_logic;
+		 TB : IN std_logic;
+         rw : IN  std_logic;
+         Clk : IN  std_logic;
+         d_data : IN  std_logic_vector(15 downto 0);
+         bus_a : OUT  std_logic_vector(15 downto 0);
+         bus_b : OUT  std_logic_vector(15 downto 0)
+        );
+    END COMPONENT;
+	 
+	 
+    COMPONENT functional_unit
+    PORT(
+         FSS : IN  std_logic_vector(4 downto 0);
+         A : IN  std_logic_vector(15 downto 0);
+         B : IN  std_logic_vector(15 downto 0);
+         F : OUT  std_logic_vector(15 downto 0);
+         V : OUT  std_logic;
+         C : OUT  std_logic;
+         N : OUT  std_logic;
+         Z : OUT  std_logic
+        );
+    END COMPONENT;
+	 
+    COMPONENT mux_2to1
+    PORT(
+         S : IN  std_logic;
+         A : IN  std_logic_vector(15 downto 0);
+         B : IN  std_logic_vector(15 downto 0);
+         Z : OUT  std_logic_vector(15 downto 0)
+        );
+    END COMPONENT;
+	 
+	  	--signals
+   signal Cout : std_logic;
+   signal Vout : std_logic;
+   signal mux_b_out : std_logic_vector(15 downto 0);
+   signal mux_d_out : std_logic_vector(15 downto 0);
+   signal zero_fill_out : std_logic_vector(15 downto 0);
+   signal functional_unit_out : std_logic_vector(15 downto 0);
+   signal d_data : std_logic_vector(15 downto 0);
+   signal a_reg_file_out : std_logic_vector(15 downto 0);
+   signal b_reg_file_out : std_logic_vector(15 downto 0);
+   	 
+begin
+		  
+reg_file: register_file PORT MAP (
+          dr => DR,
+		  TD => TD,
+          sa => SA,
+		  TA => TA,
+          sb => SB,
+		  TB => TB,
+          rw => RW,
+          Clk => Clk,
+          d_data => mux_d_out,
+          bus_a => a_reg_file_out,
+          bus_b => b_reg_file_out
+        );
+		  
+
+func_unit: functional_unit PORT MAP (
+          FSS => FS,
+          A => a_reg_file_out,
+          B => mux_b_out,
+          F => functional_unit_out,
+          V => V,
+          C => C,
+          N => N,
+          Z => Z
+        );
+		   
+mux_b: mux_2to1 PORT MAP (
+          S => MB,
+          A => b_reg_file_out,
+          B => zero_fill_out,
+          Z => mux_b_out
+        );
+	
+mux_d: mux_2to1 PORT MAP (
+          S => MD,
+          A => functional_unit_out,
+          B => data_in,
+          Z => mux_d_out
+        );
+		   
+		  
+data_out <= mux_b_out;
 end Behavioral;
