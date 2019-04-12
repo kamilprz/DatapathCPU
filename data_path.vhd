@@ -6,22 +6,24 @@ use IEEE.STD_LOGIC_UNSIGNED.ALL;
 
 entity data_path is
     Port ( 
+        td, tb, ta : in std_logic;
         clk : in STD_LOGIC;
-        write_enable : in STD_LOGIC;
-        MB_select : in STD_LOGIC;
-        MD_select : in STD_LOGIC;
-        des_reg : in STD_LOGIC_VECTOR (2 downto 0);
-        src_a : in STD_LOGIC_VECTOR (2 downto 0);
-        src_b : in STD_LOGIC_VECTOR (2 downto 0);
+        rw : in STD_LOGIC;
+        mb : in STD_LOGIC;
+        md : in STD_LOGIC;
+        dr : in STD_LOGIC_VECTOR (2 downto 0);
+        sa : in STD_LOGIC_VECTOR (2 downto 0);
+        sb : in STD_LOGIC_VECTOR (2 downto 0);
         const_in : in STD_LOGIC_VECTOR (15 downto 0);
-        mode_select : in STD_LOGIC_VECTOR (4 downto 0);
+        fs : in STD_LOGIC_VECTOR (4 downto 0);
         data_in : in STD_LOGIC_VECTOR (15 downto 0);
-        a_out : out STD_LOGIC_VECTOR (15 downto 0);
+        bus_a, bus_b : out STD_LOGIC_VECTOR (15 downto 0);
         data_out : out STD_LOGIC_VECTOR (15 downto 0);
         V : out STD_LOGIC;
         C : out STD_LOGIC;
         N : out STD_LOGIC;
-        Z : out STD_LOGIC
+        Z : out STD_LOGIC;
+        reg0, reg1, reg2, reg3, reg4, reg5, reg6, reg7, reg8 : out std_logic_vector(15 downto 0)
     );
 end data_path;
 
@@ -40,16 +42,14 @@ architecture Behavioral of data_path is
     end component;
     
     component register_file
-    port(
-        src_a : in STD_LOGIC_VECTOR (2 downto 0);
-        src_b : in STD_LOGIC_VECTOR (2 downto 0);
-        bus_a : out STD_LOGIC_VECTOR (15 downto 0);
-        bus_b : out STD_LOGIC_VECTOR (15 downto 0);
-        data_in : in STD_LOGIC_VECTOR (15 downto 0);
-        des_reg : in STD_LOGIC_VECTOR (2 downto 0);
-        write_enable : in STD_LOGIC;
-        clk : in STD_LOGIC
-    );
+        Port (
+          sa, sb, dr : in std_logic_vector(2 downto 0);
+          td, tb, ta : in std_logic;
+          Clk : in std_logic;
+          rw : in std_logic;
+          d_data : in std_logic_vector(15 downto 0);
+          bus_a, bus_b : out std_logic_vector(15 downto 0);
+          reg0, reg1, reg2, reg3, reg4, reg5, reg6, reg7, reg8 : out std_logic_vector(15 downto 0));
     end component;
     
     component mux_2to1
@@ -61,49 +61,62 @@ architecture Behavioral of data_path is
     );
     end component;
     
-    --from regfile to mux and FU
-    signal busA, busB_rSide, busB_FU_Side : STD_LOGIC_VECTOR (15 downto 0);
-    --from FU to mux and regfile
-    signal busOut_muxSide, busOut_regSide :STD_LOGIC_VECTOR (15 downto 0);
+    --Signals
+    signal d_data, data : std_logic_vector(15 downto 0);
+    signal bus_a_z, bus_b_z, bus_b_mux : std_logic_vector(15 downto 0); 
+    signal fss : std_logic_vector(4 downto 0); 
+    signal z_out : std_logic_vector(15 downto 0);
     
 begin
     FU : functional_unit port map(
-        FSS => mode_select,
-        A => busA,
-        B => busB_FU_Side,
-        F => busOut_muxSide,
+        FSS => fss,
+        A => bus_a_z,
+        B => bus_b_mux,
+        F => z_out,
         V => V,
         C => C,
         N => N,
         Z => Z
     );
     
-    regfile : register_file port map(
-        src_a => src_a,
-        src_b => src_b,
-        bus_a => busA,
-        bus_b => busB_rSide,
-        data_in => busOut_regSide,
-        des_reg => des_reg,
-        write_enable => write_enable,
-        clk => clk    
-    );
+       reg_file: register_file PORT MAP (
+            sa => sa,
+            sb => sb,
+            dr => dr,
+            td => td,
+            tb => tb,
+            ta => ta,
+            Clk => Clk,
+            rw => rw,
+            d_data => d_data,
+            bus_a => bus_a_z,
+            bus_b => bus_b_z,
+            reg0 => reg0, 
+            reg1 => reg1, 
+            reg2 => reg2, 
+            reg3 => reg3, 
+            reg4 => reg4, 
+            reg5 => reg5, 
+            reg6 => reg6, 
+            reg7 => reg7,
+            reg8 => reg8
+        );
     
     muxB : mux_2to1 port map(
         B => const_in,
-        A => busB_rSide,
-        S => MB_select,
-        z => busB_FU_Side
+        A => bus_b_z,
+        S => mb,
+        z => bus_b_mux
     );
     
     muxD : mux_2to1 port map(
         B => data_in,
-        A => busOut_muxSide,
-        S => MD_select,
-        z => busOut_regSide
+        A => z_out,
+        S => md,
+        z => d_data
     );
     
-    a_out <= busA;
-    data_out <= busB_FU_Side;
+    bus_a <= bus_a_z;
+    bus_b <= bus_b_mux;
 
 end Behavioral;

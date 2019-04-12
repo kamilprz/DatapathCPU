@@ -4,186 +4,215 @@ use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.STD_LOGIC_ARITH.ALL;
 use IEEE.STD_LOGIC_UNSIGNED.ALL;
 
+
+-- Uncomment the following library declaration if using
+-- arithmetic functions with Signed or Unsigned values
+--use IEEE.NUMERIC_STD.ALL;
+
+-- Uncomment the following library declaration if instantiating
+-- any Xilinx leaf cells in this code.
+--library UNISIM;
+--use UNISIM.VComponents.all;
+
 entity register_file is
-    Port (
-        src_a : in STD_LOGIC_VECTOR (2 downto 0);
-        src_b : in STD_LOGIC_VECTOR (2 downto 0);
-        bus_a : out STD_LOGIC_VECTOR (15 downto 0);
-        bus_b : out STD_LOGIC_VECTOR (15 downto 0);
-        data_in : in STD_LOGIC_VECTOR (15 downto 0);
-        des_reg : in STD_LOGIC_VECTOR (2 downto 0);
-        write_enable : in STD_LOGIC;
-        clk : in STD_LOGIC
-        );
+  Port (sa, sb, dr : in std_logic_vector(2 downto 0);
+        td, tb, ta : in std_logic;
+        Clk : in std_logic;
+        rw : in std_logic;
+        d_data : in std_logic_vector(15 downto 0);
+        bus_a, bus_b : out std_logic_vector(15 downto 0);
+        reg0, reg1, reg2, reg3, reg4, reg5, reg6, reg7, reg8 : out std_logic_vector(15 downto 0));
 end register_file;
 
 architecture Behavioral of register_file is
-constant gate_delay: Time := 5ns; 
-
-    --list components
+-- components
+    -- 16-bit register
+    COMPONENT register_16bit
+       Port(D : IN std_logic_vector(15 downto 0);
+            load : IN std_logic;
+            Clk : IN std_logic;
+            Q : OUT std_logic_vector(15 downto 0));
+    END COMPONENT;
     
-    --register 16-bit
-    component register_16bit
-    port (
-        load : in  STD_LOGIC;
-        clk : in  STD_LOGIC;
-        D : in  STD_LOGIC_VECTOR (15 downto 0);
-        Q : out  STD_LOGIC_VECTOR (15 downto 0)
-        );
-    end component;
+    -- 3 to 8 decoder
+    COMPONENT decoder_3to8
+       Port (A : in std_logic;
+             B : in std_logic;
+             C : in std_logic;
+             Q0 : out std_logic;
+             Q1 : out std_logic;
+             Q2 : out std_logic;
+             Q3 : out std_logic;
+             Q4 : out std_logic;
+             Q5 : out std_logic;
+             Q6 : out std_logic;
+             Q7 : out std_logic);
+    END COMPONENT;
     
-    --mux 8 16-bit
-    component mux_8to1
-    port (
-        s : in  STD_LOGIC_VECTOR (2 downto 0);
-        A : in  STD_LOGIC_VECTOR (15 downto 0);
-        B : in  STD_LOGIC_VECTOR (15 downto 0);
-        C : in  STD_LOGIC_VECTOR (15 downto 0);
-        D : in  STD_LOGIC_VECTOR (15 downto 0);
-        E : in  STD_LOGIC_VECTOR (15 downto 0);
-        F : in  STD_LOGIC_VECTOR (15 downto 0);
-        G : in  STD_LOGIC_VECTOR (15 downto 0);
-        H : in  STD_LOGIC_VECTOR (15 downto 0);
-        z : out  STD_LOGIC_VECTOR (15 downto 0)
-        );
-    end component;
+    -- 8 multiplexer 16-bit
+    COMPONENT mux_8to1 is
+      Port (A, B, C, D, E, F, G, H : in std_logic_vector(15 downto 0);
+            s : in std_logic_vector(2 downto 0);
+            Z : out std_logic_vector(15 downto 0));
+    END COMPONENT;
     
-    --decoder 3 to 8
-    component decoder_3to8
-    port ( 
-        A : in std_logic;
-        B : in std_logic;
-        C : in std_logic;
-        Q0 : out std_logic;
-        Q1 : out std_logic;
-        Q2 : out std_logic;
-        Q3 : out std_logic;
-        Q4 : out std_logic;
-        Q5 : out std_logic;
-        Q6 : out std_logic;
-        Q7 : out std_logic 
-        );
-    end component;
+    -- 2 multiplexer 16-bit
+    COMPONENT mux_2to1 is
+      Port (A : in std_logic_vector(15 downto 0);
+            B : in std_logic_vector(15 downto 0);
+            s : in std_logic;
+            Z : out std_logic_vector(15 downto 0));
+    END COMPONENT;
     
-    --signals
-    --LoaD Register Enable (from decoder to AND)
-    signal ldrE_reg0, ldrE_reg1, ldrE_reg2, ldrE_reg3, ldrE_reg4, ldrE_reg5, ldrE_reg6, ldrE_reg7 : STD_LOGIC;
-    --ReaD Register (from register to mux)
-    signal rdr_reg0, rdr_reg1, rdr_reg2, rdr_reg3, rdr_reg4, rdr_reg5, rdr_reg6, rdr_reg7 : STD_LOGIC_VECTOR(15 downto 0);
-    --Write RegisteR (from AND to register)
-    signal wrr_reg0, wrr_reg1, wrr_reg2, wrr_reg3, wrr_reg4, wrr_reg5, wrr_reg6, wrr_reg7 : STD_LOGIC;
-   
+-- signals
+signal load_reg0, load_reg1, load_reg2, load_reg3, 
+        load_reg4, load_reg5, load_reg6, load_reg7, load_reg8 : std_logic := '0';
+signal dec_out_0, dec_out_1, dec_out_2, dec_out_3, dec_out_4,
+        dec_out_5, dec_out_6, dec_out_7, dec_out_8 : std_logic := '0';
+signal reg0_q, reg1_q, reg2_q, reg3_q, reg4_q, reg5_q, reg6_q, reg7_q,reg8_q,
+        data_src_mux_out, src_reg, a_select_z, b_select_z,
+        b_reg_final : std_logic_vector(15 downto 0);
+    
 begin
-
-    --Port Mapping
+-- port maps
+    -- reg 0
+    reg00: register_16bit PORT MAP (
+        D => d_data,
+        load => load_reg0,
+        Clk => Clk,
+        Q => reg0_q);
     
-    --Registers:
-    --R0
-    reg0: register_16bit port map(
-        D => data_in,
-        Q => rdr_reg0,
-        load => wrr_reg0,
-        clk => clk
-        );
-    --R1
-    reg1: register_16bit port map(
-        D => data_in,
-        Q => rdr_reg1,
-        load => wrr_reg1,
-        clk => clk
-        );
-    --R2
-    reg2: register_16bit port map(
-        D => data_in,
-        Q => rdr_reg2,
-        load => wrr_reg2,
-        clk => clk
-        );
-    --R3
-    reg3: register_16bit port map(
-        D => data_in,
-        Q => rdr_reg3,
-        load => wrr_reg3,
-        clk => clk
-        );
-    --R4
-    reg4: register_16bit port map(
-        D => data_in,
-        Q => rdr_reg4,
-        load => wrr_reg4,
-        clk => clk
-        );
-    --R5
-    reg5: register_16bit port map(
-        D => data_in,
-        Q => rdr_reg5,
-        load => wrr_reg5,
-        clk => clk
-        );
-    --R6
-    reg6: register_16bit port map(
-        D => data_in,
-        Q => rdr_reg6,
-        load => wrr_reg6,
-        clk => clk
-        );
-    --R7
-    reg7: register_16bit port map(
-        D => data_in,
-        Q => rdr_reg7,
-        load => wrr_reg7,
-        clk => clk
-        );
-     
-    --Mux 8 16-bit (choose which register to read)
-    mux_data8_16bit_a : mux_8to1 port map(
-        s => src_a,
-        A => rdr_reg0,
-        B => rdr_reg1,
-        C => rdr_reg2,
-        D => rdr_reg3,
-        E => rdr_reg4,
-        F => rdr_reg5,
-        G => rdr_reg6,
-        H => rdr_reg7,
-        z => bus_a
-        );
+    -- reg 1
+    reg01: register_16bit PORT MAP (
+        D => d_data,
+        load => load_reg1,
+        Clk => Clk,
+        Q => reg1_q);
+
+    -- reg 2
+    reg02: register_16bit PORT MAP (
+        D => d_data,
+        load => load_reg2,
+        Clk => Clk,
+        Q => reg2_q);
+
+    -- reg 3
+    reg03: register_16bit PORT MAP (
+        D => d_data,
+        load => load_reg3,
+        Clk => Clk,
+        Q => reg3_q);
+
+    -- reg 4
+    reg04: register_16bit PORT MAP (
+        D => d_data,
+        load => load_reg4,
+        Clk => Clk,
+        Q => reg4_q);
+
+    -- reg 5
+    reg05: register_16bit PORT MAP (
+        D => d_data,
+        load => load_reg5,
+        Clk => Clk,
+        Q => reg5_q);
+
+    -- reg 6
+    reg06: register_16bit PORT MAP (
+        D => d_data,
+        load => load_reg6,
+        Clk => Clk,
+        Q => reg6_q);
+    
+    -- reg 7
+    reg07: register_16bit PORT MAP (
+        D => d_data,
+        load => load_reg7,
+        Clk => Clk,
+        Q => reg7_q);
         
-     --Mux 8 16-bit (choose which register to read)
-     mux_data8_16bit_b : mux_8to1 port map(
-        s => src_b,
-        A => rdr_reg0,
-        B => rdr_reg1,
-        C => rdr_reg2,
-        D => rdr_reg3,
-        E => rdr_reg4,
-        F => rdr_reg5,
-        G => rdr_reg6,
-        H => rdr_reg7,
-        z => bus_b
-        );
-        
-    --Decoder 3 to 8 (choose which register to write to)
-    decoder_regSelect3_8 : decoder_3to8 port map(
-        A => des_reg(0),
-        B => des_reg(1),
-        C => des_reg(2),
-        Q0 => ldrE_reg0,
-        Q1 => ldrE_reg1,
-        Q2 => ldrE_reg2,
-        Q3 => ldrE_reg3,
-        Q4 => ldrE_reg4,
-        Q5 => ldrE_reg5,
-        Q6 => ldrE_reg6,
-        Q7 => ldrE_reg7
-        );
+    -- reg 8
+    reg08: register_16bit PORT MAP (
+        D => d_data,
+        load => load_reg8,
+        Clk => Clk,
+        Q => reg8_q);
+
+    -- destination register decoder
+    des_decoder_3to8: decoder_3to8 PORT MAP (
+        A => dr(0),
+        B => dr(1), 
+        C => dr(2),
+        Q0 => dec_out_0, 
+        Q1 => dec_out_1, 
+        Q2 => dec_out_2, 
+        Q3 => dec_out_3, 
+        Q4 => dec_out_4, 
+        Q5 => dec_out_5, 
+        Q6 => dec_out_6, 
+        Q7 => dec_out_7 
+     );
      
-    wrr_reg0 <= (ldrE_reg0 and write_enable) after gate_delay;
-    wrr_reg1 <= (ldrE_reg1 and write_enable) after gate_delay;
-    wrr_reg2 <= (ldrE_reg2 and write_enable) after gate_delay;
-    wrr_reg3 <= (ldrE_reg3 and write_enable) after gate_delay;
-    wrr_reg4 <= (ldrE_reg4 and write_enable) after gate_delay;
-    wrr_reg5 <= (ldrE_reg5 and write_enable) after gate_delay;
-    wrr_reg6 <= (ldrE_reg6 and write_enable) after gate_delay;
-    wrr_reg7 <= (ldrE_reg7 and write_enable) after gate_delay;
+     load_reg0 <= dec_out_0 and rw and not td;
+     load_reg1 <= dec_out_1 and rw and not td;
+     load_reg2 <= dec_out_2 and rw and not td;
+     load_reg3 <= dec_out_3 and rw and not td;
+     load_reg4 <= dec_out_4 and rw and not td;
+     load_reg5 <= dec_out_5 and rw and not td;
+     load_reg6 <= dec_out_6 and rw and not td;
+     load_reg7 <= dec_out_7 and rw and not td;
+     load_reg8 <= td and rw;
+
+    -- 8 to 1 source register multiplexer
+    b_select_mux : mux_8to1 PORT MAP (
+        A => reg0_q,
+        B => reg1_q,
+        C => reg2_q,
+        D => reg3_q,
+        E => reg4_q,
+        F => reg5_q,
+        G => reg6_q,
+        H => reg7_q,
+        s => sb,
+        Z => b_select_z
+    );
+    
+    a_select_mux : mux_8to1 PORT MAP (
+        A => reg0_q,
+        B => reg1_q,
+        C => reg2_q,
+        D => reg3_q,
+        E => reg4_q,
+        F => reg5_q,
+        G => reg6_q,
+        H => reg7_q,
+        s => sa,
+        Z => a_select_z
+    );
+    
+    a_sel_mux_2 : mux_2to1 PORT MAP (
+        A => a_select_z,
+        B => reg8_q,
+        s => ta,
+        Z => bus_a
+    );
+    
+    
+    b_sel_mux_2 : mux_2to1 PORT MAP (
+        A => b_select_z,
+        B => reg8_q,
+        s => tb,
+        Z => bus_b
+    );
+    
+
+    reg0 <= reg0_q;
+    reg1 <= reg1_q;
+    reg2 <= reg2_q;
+    reg3 <= reg3_q;
+    reg4 <= reg4_q;
+    reg5 <= reg5_q;
+    reg6 <= reg6_q;
+    reg7 <= reg7_q;
+    
 end Behavioral;
