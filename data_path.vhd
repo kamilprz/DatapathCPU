@@ -20,7 +20,8 @@ entity data_path is
            V : out  STD_LOGIC;
            C : out  STD_LOGIC;
            N : out  STD_LOGIC;
-           Z : out  STD_LOGIC
+           Z : out  STD_LOGIC;
+           reg0, reg1, reg2, reg3, reg4, reg5, reg6, reg7, reg8 : out std_logic_vector(15 downto 0)
            );
 end data_path;
 
@@ -38,7 +39,8 @@ architecture Behavioral of data_path is
          Clk : IN  std_logic;
          d_data : IN  std_logic_vector(15 downto 0);
          bus_a : OUT  std_logic_vector(15 downto 0);
-         bus_b : OUT  std_logic_vector(15 downto 0)
+         bus_b : OUT  std_logic_vector(15 downto 0);
+         reg0, reg1, reg2, reg3, reg4, reg5, reg6, reg7, reg8 : out std_logic_vector(15 downto 0)
         );
     END COMPONENT;
 	 
@@ -55,6 +57,12 @@ architecture Behavioral of data_path is
          Z : OUT  std_logic
         );
     END COMPONENT;
+    
+    COMPONENT zero_fill
+        Port ( SB : in  STD_LOGIC_VECTOR (2 downto 0);
+	           constant_out : out STD_LOGIC_VECTOR (15 downto 0)
+	          );
+    END COMPONENT;    
 	 
     COMPONENT mux_2to1
     PORT(
@@ -89,8 +97,22 @@ reg_file: register_file PORT MAP (
           Clk => Clk,
           d_data => mux_d_out,
           bus_a => a_reg_file_out,
-          bus_b => b_reg_file_out
+          bus_b => b_reg_file_out,
+          reg0 => reg0,
+          reg1 => reg1,
+          reg2 => reg2,
+          reg3 => reg3,
+          reg4 => reg4,
+          reg5 => reg5,
+          reg6 => reg6,
+          reg7 => reg7,
+          reg8 => reg8
         );
+        
+z_fill: zero_fill PORT MAP (
+			SB => SB,
+			constant_out => zero_fill_out
+		);
 		  
 
 func_unit: functional_unit PORT MAP (
@@ -103,6 +125,7 @@ func_unit: functional_unit PORT MAP (
           N => N,
           Z => Z
         );
+
 		   
 mux_b: mux_2to1 PORT MAP (
           S => MB,
@@ -117,7 +140,6 @@ mux_d: mux_2to1 PORT MAP (
           B => data_in,
           Z => mux_d_out
         );
-		   
-		  
+	  
 data_out <= mux_b_out;
 end Behavioral;

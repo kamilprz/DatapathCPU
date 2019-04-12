@@ -31,7 +31,9 @@ ARCHITECTURE behavioral OF data_path_tb IS
            V : out  STD_LOGIC;
            C : out  STD_LOGIC;
            N : out  STD_LOGIC;
-           Z : out  STD_LOGIC);
+           Z : out  STD_LOGIC;
+           reg0, reg1, reg2, reg3, reg4, reg5, reg6, reg7, reg8 : out std_logic_vector(15 downto 0)
+           );
     END COMPONENT;
     
 
@@ -57,9 +59,11 @@ ARCHITECTURE behavioral OF data_path_tb IS
    signal C : std_logic;
    signal N : std_logic;
    signal Z : std_logic;
+   
+   signal reg0, reg1, reg2, reg3, reg4, reg5, reg6, reg7, reg8 : std_logic_vector(15 downto 0) := (others => '0');
 
    -- Clock period definitions
-   constant Clk_period : time := 50 ns;
+   constant Clk_period : time := 10 ns;
  
 BEGIN
  
@@ -83,7 +87,16 @@ BEGIN
           V => V,
           C => C,
           N => N,
-          Z => Z
+          Z => Z,
+          reg0 => reg0,
+          reg1 => reg1,
+          reg2 => reg2,
+          reg3 => reg3,
+          reg4 => reg4,
+          reg5 => reg5,
+          reg6 => reg6,
+          reg7 => reg7,
+          reg8 => reg8
         );
 
    -- Clock process definitions
@@ -99,188 +112,137 @@ BEGIN
  stim_proc : process
     begin 
         --test registers
-        --load hex 0 to reg0
+        --load 0 to reg0
         dr <= "000";
         rw <= '1';
         data_in <= x"0000";
         md <= '1';
         wait for clk_period;
         
-        --load hex 1 to reg1
+        --load 1 to reg1
         dr <= "001";
         data_in <= x"0001";
         rw <= '1';
         md <= '1';
         wait for clk_period;
         
-        --load hex 2 to reg2
+        --load 2 to reg2
         dr <= "010";
         rw <= '1';
         data_in <= x"0002";
         md <= '1';
         wait for clk_period;
         
-        --load hex 3 to reg3
+        --load 3 to reg3
         dr <= "011";
         rw <= '1';
         data_in <= x"0003";
         md <= '1';
         wait for clk_period;
         
-        --load hex 4 to reg4
+        --load 4 to reg4
         dr <= "100";
         rw <= '1';
         data_in <= x"0004";
         md <= '1';
         wait for clk_period;
         
-        --load hex 5 to reg5
+        --load 5 to reg5
         dr <= "101";
         rw <= '1';
         data_in <= x"0005";
         md <= '1';
         wait for clk_period;
         
-        --load hex 6 to reg6
+        --load 6 to reg6
         dr <= "110";
         rw <= '1';
         data_in <= x"0006";
         md <= '1';
         wait for clk_period;
        
-        --load hex 7 to reg7
+        --reg7 = reg5
+        sa <= "101";
+        fs <= "00000";
         dr <= "111";
         rw <= '1';
-        data_in <= x"0007";
-        md <= '1';
-        wait for clk_period;
-        
-        --reg2 = reg1
-        sa <= "001";
-        fs <= "00000";
-        dr <= "010";
-        rw <= '1';
         md <= '0';
-        wait for clk_period;
+        wait for clk_period * 10;
         
-        --reg2 = reg1 + 1
-        sa <= "001";
+        --reg7 = reg6 + 1
+        sa <= "110";
         fs <= "00001";
-        dr <= "010";
+        dr <= "111";
         rw <= '1';
         md <= '0';
-        wait for clk_period;
-       
-        --reg2 = reg1 + reg5 
-        sa <= "001";
+        wait for clk_period * 10;
+        
+        --reg7 = reg4 + reg5 
+        sa <= "100";
         sb <= "101";
         mb <= '0';
         fs <= "00010";
-        dr <= "010";
+        dr <= "111";
         rw <= '1';
         md <= '0';
-        wait for clk_period;
+        wait for clk_period * 10;
         
-        --reg2 = reg1 + reg5 + 1
+       
+        --reg7 = reg1 + reg5 + 1
         sa <= "001";
         sb <= "101";
         mb <= '0';
         fs <= "00011";
-        dr <= "010";
+        dr <= "111";
         rw <= '1';
         md <= '0';
-        wait for clk_period;
+        wait for clk_period * 10;
         
-        --reg6 = reg1 + !reg5
+        --reg7 = reg1 + !reg5
         sa <= "001";
         sb <= "101";
         mb <= '0';
         fs <= "00100";
-        dr <= "110";
+        dr <= "111";
         rw <= '1';
         md <= '0';
-        wait for clk_period;
+        wait for clk_period * 10;
         
-        --reg6 = reg1 + !reg5 + 1
+        --reg7 = reg1 + !reg5 + 1
         sa <= "001";
         sb <= "101";
         mb <= '0';
         fs <= "00101";
-        dr <= "110";
+        dr <= "111";
         rw <= '1';
         md <= '0';
-        wait for clk_period;
+        wait for clk_period * 10;
         
-        --reg6 = reg1 - 1
+        --reg7 = reg1 - 1
         sa <= "001";
         sb <= "101";
         mb <= '0';
         fs <= "00110";
-        dr <= "110";
+        dr <= "111";
         rw <= '1';
         md <= '0';
-        wait for clk_period;
+        wait for clk_period * 10;
        
-        --reg6 = reg1 
+        --reg7 = reg1 
         sa <= "001";
         sb <= "101";
         mb <= '0';
         fs <= "00111";
-        dr <= "110";
+        dr <= "111";
         rw <= '1';
         md <= '0';
-        wait for clk_period;
-       
-        --overflow and negative check
-            --load hex 7FFF to reg3
-            dr <= "011";
-            rw <= '1';
-            data_in <= x"7FFF";
-            md <= '1';
-            wait for clk_period;
+        wait for clk_period * 10;
             
-            --load hex 0001 to reg4
-            dr <= "100";
-            rw <= '1';
-            data_in <= x"0001";
-            md <= '1';
-            wait for clk_period;
-            
-            --reg3 + reg4 
-            sa <= "011";
-            sb <= "100";
-            mb <= '0';
-            fs <= "00010";
-            dr <= "101";
-            rw <= '0';
-            md <= '0';
-            wait for clk_period;
-            
-        --carry & zero check
-            --load hex FFFF to reg3
-            dr <= "011";
-            rw <= '1';
-            data_in <= x"FFFF";
-            md <= '1';
-            wait for clk_period;
-            
-            --hex 0001 already in reg4
-            
-            --reg3 + reg4 
-            sa <= "011";
-            sb <= "100";
-            mb <= '0';
-            fs <= "00010";
-            dr <= "101";
-            rw <= '0';
-            md <= '0';
-            wait for clk_period;
-        
         --LOGIC
-        --load hex 3C3C to reg3
+        --load hex DEAD to reg3
         dr <= "011";
         rw <= '1';
-        data_in <= x"3C3C";
+        data_in <= x"DEAD";
         md <= '1';
         wait for clk_period;
         
@@ -291,55 +253,46 @@ BEGIN
         md <= '1';
         wait for clk_period;
         
-        --reg1 = reg3 AND reg4 
+        --reg7 = DEAD AND F0F0 
         sa <= "011";
         sb <= "100";
         mb <= '0';
         fs <= "01000";
-        dr <= "001";
+        dr <= "111";
         rw <= '1';
         md <= '0';
-        wait for clk_period;
+        wait for clk_period * 10;
 
-        --reg1 = reg3 OR reg4 
+        --reg7 = DEAD OR F0F0 
         sa <= "011";
         sb <= "100";
         mb <= '0';
         fs <= "01010";
-        dr <= "001";
+        dr <= "111";
         rw <= '1';
         md <= '0';
-        wait for clk_period;
+        wait for clk_period * 10;
             
-        --reg1 = reg3 XOR reg4 
+        --reg7 = DEAD XOR F0F0 
         sa <= "011";
         sb <= "100";
         mb <= '0';
         fs <= "01100";
-        dr <= "001";
+        dr <= "111";
         rw <= '1';
         md <= '0';
-        wait for clk_period;
+        wait for clk_period * 10;
         
-        --reg1 = reg3 OR reg4 
-        sa <= "011";
-        sb <= "100";
-        mb <= '0';
-        fs <= "01010";
-        dr <= "001";
-        rw <= '1';
-        md <= '0';
-        wait for clk_period;
         
-        --reg1 = NOT(reg3)
+        --reg7 = NOT(DEAD)
         sa <= "011";
         sb <= "100";
         mb <= '0';
         fs <= "01110";
-        dr <= "001";
+        dr <= "111";
         rw <= '1';
         md <= '0';
-        wait for clk_period;
+        wait for clk_period * 10;
         
         --SHIFTING
         --load hex 00F0 to reg4
@@ -347,37 +300,37 @@ BEGIN
         rw <= '1';
         data_in <= x"00F0";
         md <= '1';
-        wait for clk_period;
+        wait for clk_period * 10;
         
-        --reg1 = reg4
+        --reg7 = 00F0
         sa <= "011";
         sb <= "100";
         mb <= '0';
         fs <= "10000";
-        dr <= "001";
+        dr <= "111";
         rw <= '1';
         md <= '0';
-        wait for clk_period;
-    
-        --reg1 = sr(reg4)
+        wait for clk_period * 10;
+               
+        --reg7 = sr(00F0)
         sa <= "011";
         sb <= "100";
         mb <= '0';
         fs <= "10100";
-        dr <= "001";
+        dr <= "111";
         rw <= '1';
         md <= '0';
-        wait for clk_period;
+        wait for clk_period * 10;
         
-        --reg1 = sr(reg4)
+        --reg7 = sl(00F0)
         sa <= "011";
         sb <= "100";
         mb <= '0';
         fs <= "11000";
-        dr <= "001";
+        dr <= "111";
         rw <= '1';
         md <= '0';
-        wait for clk_period;
+        wait;
         
     end process;
 end Behavioral;
