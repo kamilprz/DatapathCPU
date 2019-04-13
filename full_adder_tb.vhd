@@ -4,7 +4,6 @@ use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.STD_LOGIC_ARITH.ALL;
 use IEEE.STD_LOGIC_UNSIGNED.ALL;
 
-
 entity full_adder_tb is
 end full_adder_tb;
 
@@ -33,44 +32,55 @@ begin
     
     stim_process: process
     begin
+    -- 0 + 0 + 0 = 0
     A <= '0';
     B <= '0';
     C_in <= '0';
     
+    -- 1 + 0 + 0 = 1
     wait for 10 ns;
     A <= '1';
     B <= '0';
     C_in <= '0';
     
+    -- 0 + 1 + 0 = 1
     wait for 10 ns;
     A <= '0';
     B <= '1';
     C_in <= '0';
     
+    -- 0 + 0 + 1 = 1
     wait for 10 ns;
     A <= '0';
     B <= '0';
     C_in <= '1';
     
+    -- 1 + 0 + 1 = 0 Carry 1
     wait for 10 ns;
     A <= '1';
     B <= '0';
     C_in <= '1';
     
+    -- 0 + 1 + 1 = 0 Carry 1
     wait for 10 ns;
     A <= '0';
     B <= '1';
     C_in <= '1';
     
+    -- 1 + 1 + 0 = 0 Carry 1 
     wait for 10 ns;
     A <= '1';
     B <= '1';
     C_in <= '0';
     
+    -- 1 + 1 + 1 = 1 Carry 1
     wait for 10 ns;
     A <= '1';
     B <= '1';
     C_in <= '1';
+    
+    wait for 10 ns;
+    wait;
     
     end process;
 

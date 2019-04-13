@@ -4,16 +4,6 @@ use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.STD_LOGIC_ARITH.ALL;
 use IEEE.STD_LOGIC_UNSIGNED.ALL;
 
-
--- Uncomment the following library declaration if using
--- arithmetic functions with Signed or Unsigned values
---use IEEE.NUMERIC_STD.ALL;
-
--- Uncomment the following library declaration if instantiating
--- any Xilinx leaf cells in this code.
---library UNISIM;
---use UNISIM.VComponents.all;
-
 entity register_file is
   Port (sa, sb, dr : in std_logic_vector(2 downto 0);
         td, tb, ta : in std_logic;
@@ -21,7 +11,8 @@ entity register_file is
         rw : in std_logic;
         d_data : in std_logic_vector(15 downto 0);
         bus_a, bus_b : out std_logic_vector(15 downto 0);
-        reg0, reg1, reg2, reg3, reg4, reg5, reg6, reg7, reg8 : out std_logic_vector(15 downto 0));
+        reg0, reg1, reg2, reg3, reg4, reg5, reg6, reg7, reg8 : out std_logic_vector(15 downto 0)
+        );
 end register_file;
 
 architecture Behavioral of register_file is
@@ -65,13 +56,9 @@ architecture Behavioral of register_file is
     END COMPONENT;
     
 -- signals
-signal load_reg0, load_reg1, load_reg2, load_reg3, 
-        load_reg4, load_reg5, load_reg6, load_reg7, load_reg8 : std_logic := '0';
-signal dec_out_0, dec_out_1, dec_out_2, dec_out_3, dec_out_4,
-        dec_out_5, dec_out_6, dec_out_7, dec_out_8 : std_logic := '0';
-signal reg0_q, reg1_q, reg2_q, reg3_q, reg4_q, reg5_q, reg6_q, reg7_q,reg8_q,
-        data_src_mux_out, src_reg, a_select_z, b_select_z,
-        b_reg_final : std_logic_vector(15 downto 0);
+signal load_reg0, load_reg1, load_reg2, load_reg3, load_reg4, load_reg5, load_reg6, load_reg7, load_reg8 : std_logic := '0';
+signal dec_out_0, dec_out_1, dec_out_2, dec_out_3, dec_out_4, dec_out_5, dec_out_6, dec_out_7, dec_out_8 : std_logic := '0';
+signal reg0_q, reg1_q, reg2_q, reg3_q, reg4_q, reg5_q, reg6_q, reg7_q,reg8_q, data_src_mux_out, src_reg, a_select_z, b_select_z, b_reg_final : std_logic_vector(15 downto 0);
     
 begin
 -- port maps
@@ -140,9 +127,9 @@ begin
 
     -- destination register decoder
     des_decoder_3to8: decoder_3to8 PORT MAP (
-        A => dr(0),
+        A => dr(2),
         B => dr(1), 
-        C => dr(2),
+        C => dr(0),
         Q0 => dec_out_0, 
         Q1 => dec_out_1, 
         Q2 => dec_out_2, 
@@ -153,15 +140,6 @@ begin
         Q7 => dec_out_7 
      );
      
-     load_reg0 <= dec_out_0 and rw and not td;
-     load_reg1 <= dec_out_1 and rw and not td;
-     load_reg2 <= dec_out_2 and rw and not td;
-     load_reg3 <= dec_out_3 and rw and not td;
-     load_reg4 <= dec_out_4 and rw and not td;
-     load_reg5 <= dec_out_5 and rw and not td;
-     load_reg6 <= dec_out_6 and rw and not td;
-     load_reg7 <= dec_out_7 and rw and not td;
-     load_reg8 <= td and rw;
 
     -- 8 to 1 source register multiplexer
     b_select_mux : mux_8to1 PORT MAP (
@@ -205,7 +183,16 @@ begin
         Z => bus_b
     );
     
-
+     load_reg0 <= dec_out_0 and rw and not td;
+     load_reg1 <= dec_out_1 and rw and not td;
+     load_reg2 <= dec_out_2 and rw and not td;
+     load_reg3 <= dec_out_3 and rw and not td;
+     load_reg4 <= dec_out_4 and rw and not td;
+     load_reg5 <= dec_out_5 and rw and not td;
+     load_reg6 <= dec_out_6 and rw and not td;
+     load_reg7 <= dec_out_7 and rw and not td;
+     load_reg8 <= td and rw;
+    
     reg0 <= reg0_q;
     reg1 <= reg1_q;
     reg2 <= reg2_q;
@@ -214,5 +201,6 @@ begin
     reg5 <= reg5_q;
     reg6 <= reg6_q;
     reg7 <= reg7_q;
+    reg8 <= reg8_q;
     
 end Behavioral;

@@ -1,15 +1,8 @@
 
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
-
--- Uncomment the following library declaration if using
--- arithmetic functions with Signed or Unsigned values
---use IEEE.NUMERIC_STD.ALL;
-
--- Uncomment the following library declaration if instantiating
--- any Xilinx leaf cells in this code.
---library UNISIM;
---use UNISIM.VComponents.all;
+use IEEE.STD_LOGIC_ARITH.ALL;
+use IEEE.STD_LOGIC_UNSIGNED.ALL;
 
 entity car is
     Port (opcode : in std_logic_vector(7 downto 0);
@@ -23,9 +16,9 @@ end car;
 architecture Behavioral of car is
     component ripple_adder_16
         Port (b, a : in std_logic_vector(15 downto 0);
-              c0 : in std_logic;
-              s : out std_logic_vector(15 downto 0);
-              c16 : out std_logic);
+              Cin : in std_logic;
+              Z : out std_logic_vector(15 downto 0);
+              C : out std_logic);
     end component;
     
     component register_16bit
@@ -44,8 +37,8 @@ begin
         b(7 downto 0) => car_val(7 downto 0),
         b(15 downto 8) => "00000000",
         a => X"0001",
-        c0 => '0',
-        s => inc
+        Cin => '0',
+        Z => inc
     );
     
     reg0 : register_16bit port map (

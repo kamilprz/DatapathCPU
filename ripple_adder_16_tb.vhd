@@ -1,10 +1,8 @@
 
-
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.STD_LOGIC_ARITH.ALL;
 use IEEE.STD_LOGIC_UNSIGNED.ALL;
-
 
 entity ripple_adder_16_tb is
 end ripple_adder_16_tb;
@@ -37,17 +35,19 @@ begin
     
     stim_process: process
         begin
-
+          -- 0 + 0 + 1 = 1
           A <= x"0000";
           B <= x"0000";
           Cin <= '1';
         wait for 100 ns;
 
+          -- 5 + 5 + 0 = 10
           A <= x"0005";
           B <= x"0005";
           Cin <= '0';
         wait for 100 ns;
           
+          -- Overflow and Carry flag test
           A <= x"8000";
           B <= x"8000";
           Cin <= '0';

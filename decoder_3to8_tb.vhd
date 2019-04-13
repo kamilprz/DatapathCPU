@@ -1,18 +1,13 @@
-LIBRARY ieee;
-USE ieee.std_logic_1164.ALL;
+
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.STD_LOGIC_ARITH.ALL;
 use IEEE.STD_LOGIC_UNSIGNED.ALL;
- 
--- Uncomment the following library declaration if using
--- arithmetic functions with Signed or Unsigned values
---USE ieee.numeric_std.ALL;
  
 ENTITY decoder_3to8_tb IS
 END decoder_3to8_tb;
  
 ARCHITECTURE behavior OF decoder_3to8_tb IS 
- 
-    -- Component Declaration for the Unit Under Test (UUT)
  
     COMPONENT decoder_3to8
     PORT(
@@ -47,14 +42,8 @@ ARCHITECTURE behavior OF decoder_3to8_tb IS
    signal Q6 : std_logic := '0';
    signal Q7 : std_logic := '0';
 
-   
-   -- No clocks detected in port list. Replace <clock> below with 
-   -- appropriate port name 
- 
---   constant Clk_period : time := 10 ns;
  
 BEGIN
-	-- Instantiate the Unit Under Test (UUT)
    uut: decoder_3to8 PORT MAP (
           A => A,
           B => B,
@@ -70,28 +59,47 @@ BEGIN
         );
 
    stim_proc: process
-   begin		
+   begin
+   
+    --  Q0
+    A <= '0';
+    B <= '0';
+    C <= '0';
     wait for 10 ns;
+   		
+    --  Q1
     A <= '0';
     B <= '0';
     C <= '1';
     wait for 10 ns;
+    
+    -- Q2
     B <= '1';
     C <= '0';
     wait for 10 ns;
+    
+    -- Q3
     C <= '1';
     wait for 10 ns;
+    
+    --Q4
     A <= '1';
     B <= '0';
     C <= '0';
     wait for 10 ns;
+    
+    --Q5
     C <= '1';
     wait for 10 ns;
+    
+    --Q6
     B <= '1';
     C <= '0';
     wait for 10ns;
-    C <= '1';
     
+    --Q7
+    C <= '1';
+    wait for 10ns;
    end process;
 
 END;

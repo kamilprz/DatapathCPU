@@ -30,12 +30,15 @@ begin
     
     stim_proc: process
     begin
+        -- outPut = 1 
         inPut <= x"0000";
         wait for 50 ns;
         
+        -- outPut = 0 
         inPut <= x"0100";
         wait for 50 ns;
         
+        -- outPut = 0 
         inPut <=  x"0001";
         wait for 50 ns;
     end process;

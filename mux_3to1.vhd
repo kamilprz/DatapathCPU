@@ -4,7 +4,6 @@ use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.STD_LOGIC_ARITH.ALL;
 use IEEE.STD_LOGIC_UNSIGNED.ALL;
 
-
 entity mux_3to1 is
 Port ( A, B, C : in std_logic;
        S : in std_logic_vector(1 downto 0);

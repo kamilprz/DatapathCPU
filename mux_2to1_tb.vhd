@@ -1,12 +1,8 @@
---------------------------------------------------------------------------------
-LIBRARY ieee;
-USE ieee.std_logic_1164.ALL;
+
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.STD_LOGIC_ARITH.ALL;
 use IEEE.STD_LOGIC_UNSIGNED.ALL;
- 
--- Uncomment the following library declaration if using
--- arithmetic functions with Signed or Unsigned values
---USE ieee.numeric_std.ALL;
  
 ENTITY mux_2to1_tb IS
 END mux_2to1_tb;
@@ -33,10 +29,7 @@ ARCHITECTURE behavior OF mux_2to1_tb IS
 
  	--Outputs
    signal Z : std_logic_vector(15 downto 0);
-   -- No clocks detected in port list. Replace <clock> below with 
-   -- appropriate port name 
- 
---   constant Clk_period : time := 10 ns;
+
  
 BEGIN
  
@@ -52,12 +45,13 @@ BEGIN
    begin		
         A <= x"DEAD";
 		B <= x"BEEF";
-      wait for 10 ns;	
+      -- Z = DEAD	
         s <= '0';
+        wait for 10 ns;
 
-      wait for 10 ns;	
+      -- Z = BEEF	
 		s <= '1';
- --     wait;
+		wait for 10 ns;	
    end process;
 
 END;

@@ -1,19 +1,13 @@
---------------------------------------------------------------------------------
-LIBRARY ieee;
-USE ieee.std_logic_1164.ALL;
+
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.STD_LOGIC_ARITH.ALL;
 use IEEE.STD_LOGIC_UNSIGNED.ALL;
- 
--- Uncomment the following library declaration if using
--- arithmetic functions with Signed or Unsigned values
---USE ieee.numeric_std.ALL;
  
 ENTITY register_16bit_tb IS
 END register_16bit_tb;
  
 ARCHITECTURE behavior OF register_16bit_tb IS 
- 
-    -- Component Declaration for the Unit Under Test (UUT)
  
     COMPONENT register_16bit
     PORT(
@@ -31,8 +25,6 @@ ARCHITECTURE behavior OF register_16bit_tb IS
 
  	--Outputs
    signal Q : std_logic_vector(15 downto 0);
-   -- No clocks detected in port list. Replace <clock> below with 
-   -- appropriate port name 
  
     constant clk_period : time := 5 ns;
  
@@ -53,10 +45,13 @@ BEGIN
    end process;
    
    stim_proc : process
-   begin		
+   begin
+        -- load x"DEAD" into register		
         D <= x"DEAD";
         load <= '1';
         wait for clk_period*2;
+
+        -- load x"BEEF" into register	
         D <= x"BEEF";
         wait for clk_period*2;
    end process;

@@ -91,24 +91,7 @@ begin
         B <= x"0005";
         FSS <= "00110";
         wait for wait_time;
-       
-        --out = A 
-        A <= x"BEEF";
-        B <= x"0005";
-        FSS <= "00111";
-        wait for wait_time;
         
-        --overflow check
-        A <= x"7FFF";
-        B <= x"0001";
-        FSS <= "00010";
-        wait for wait_time;
-        
-        --carry check
-        A <= x"FFFF";
-        B <= x"0001";
-        FSS <= "00010";
-        wait for wait_time;
         
         --LOGIC
 		A <= x"DEAD";

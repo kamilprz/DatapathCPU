@@ -1,18 +1,8 @@
 
-
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.STD_LOGIC_ARITH.ALL;
 use IEEE.STD_LOGIC_UNSIGNED.ALL;
-
--- Uncomment the following library declaration if using
--- arithmetic functions with Signed or Unsigned values
---use IEEE.NUMERIC_STD.ALL;
-
--- Uncomment the following library declaration if instantiating
--- any Xilinx leaf cells in this code.
---library UNISIM;
---use UNISIM.VComponents.all;
 
 entity mux_b_to_y_tb is
 end mux_b_to_y_tb;
@@ -40,27 +30,30 @@ begin
         
     stim_process: process
     begin
- 
+        -- Y = x"0000"
         B <= x"0101";
         S0 <= '0';
-        S1 <= '0';
+        S1 <= '0'; 
+        wait for 20ns;
         
-        wait for 20ns;
+         -- Y = B
         B <= x"0101";
         S0 <= '1';
-        S1 <= '0';
-                
+        S1 <= '0';        
         wait for 20ns;
+        
+        -- Y = not(B)
         B <= x"0101";
         S0 <= '0';
-        S1 <= '1';
-                        
+        S1 <= '1';            
         wait for 20ns;
+        
+        -- Y = x"FFFF"
         B <= x"0101";
         S0 <= '1';
         S1 <= '1';
-    
         wait for 20ns;
+        
     end process;
 
 end Behavioral;

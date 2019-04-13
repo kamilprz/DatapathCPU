@@ -1,9 +1,8 @@
-LIBRARY ieee;
-USE ieee.std_logic_1164.ALL;
- 
--- Uncomment the following library declaration if using
--- arithmetic functions with Signed or Unsigned values
---USE ieee.numeric_std.ALL;
+
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.STD_LOGIC_ARITH.ALL;
+use IEEE.STD_LOGIC_UNSIGNED.ALL;
  
 ENTITY data_path_tb IS
 END data_path_tb;
@@ -330,7 +329,7 @@ BEGIN
         dr <= "111";
         rw <= '1';
         md <= '0';
-        wait;
+        wait for clk_period * 10;
         
     end process;
 end Behavioral;

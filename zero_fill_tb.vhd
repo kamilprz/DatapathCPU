@@ -35,15 +35,15 @@ BEGIN
    begin		
 		--Test with the constant as 5
 		SB <= "101";
-      wait for 100 ns;
+        wait for 100 ns;
 		
 		--Test with the constant as 0
 		SB <= "000";
-      wait for 100 ns;
+        wait for 100 ns;
 		
-		--Test with the constant as 2
-		SB <= "010";
-		wait;
+		--Test with the constant as 7
+		SB <= "111";
+		wait for 100 ns;
       end process;
 
 END;
